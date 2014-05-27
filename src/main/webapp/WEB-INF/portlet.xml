@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<portlet-app xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd
+             http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd"
+	version="2.0">
+
+	<portlet>
+		<description>Write a short description about your portlet.</description>
+		<portlet-name>BeaconRegionGraph</portlet-name>
+		<display-name>Beacon Region Graph</display-name>
+
+		<portlet-class>com.liferay.mavenizedbeacons.CustomVaadinPortlet</portlet-class>
+
+		<init-param>
+			<name>UI</name>
+			<value>com.liferay.beaconexample.BeaconRegionGraph</value>
+		</init-param>
+
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+
+
+		<portlet-info>
+			<title>Beacon Region Graph</title>
+			<short-title>Beacon Region Graph</short-title>
+			<keywords>Vaadin 7</keywords>
+		</portlet-info>
+
+		<security-role-ref>
+			<role-name>administrator</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>guest</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>power-user</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>user</role-name>
+		</security-role-ref>
+
+	</portlet>
+	<portlet>
+		<portlet-name>BeaconPingTable</portlet-name>
+		<display-name>Beacon Ping Table</display-name>
+		<portlet-class>com.liferay.mavenizedbeacons.CustomVaadinPortlet</portlet-class>
+		<init-param>
+			<name>UI</name>
+			<value>com.liferay.beaconexample.BeaconPingTable</value>
+		</init-param>
+
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+
+		</supports>
+
+		<portlet-info>
+			<title>Beacon Ping Table</title>
+			<short-title>Beacon Ping Table</short-title>
+			<keywords>Vaadin 7</keywords>
+		</portlet-info>
+
+		<security-role-ref>
+			<role-name>administrator</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>guest</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>power-user</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>user</role-name>
+		</security-role-ref>
+
+	</portlet>
+	<portlet>
+		<portlet-name>BeaconProximityGraph</portlet-name>
+		<display-name>Beacon Proximity Graph</display-name>
+		<portlet-class>com.liferay.mavenizedbeacons.CustomVaadinPortlet</portlet-class>
+		<init-param>
+			<name>UI</name>
+			<value>com.liferay.beaconexample.BeaconProximityGraph</value>
+		</init-param>
+
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+
+		</supports>
+
+		<portlet-info>
+			<title>Beacon Proximity Graph</title>
+			<short-title>Beacon Proximity Graph</short-title>
+			<keywords>Vaadin 7</keywords>
+		</portlet-info>
+
+		<security-role-ref>
+			<role-name>administrator</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>guest</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>power-user</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>user</role-name>
+		</security-role-ref>
+
+	</portlet>
+</portlet-app>
