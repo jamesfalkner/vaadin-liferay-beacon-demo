@@ -27,16 +27,15 @@ import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.server.VaadinPortletService;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinService;
-import com.vaadin.server.WrappedPortletSession;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.ProgressBar;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Button.ClickEvent;
 
 /**
  * This Vaadin portlet visualizes data from Expando Liferay tables. It will render
@@ -66,13 +65,11 @@ public class BeaconRegionGraph extends UI implements Serializable {
 		// get some liferay stuff
 		PortletRequest req = VaadinPortletService.getCurrentPortletRequest();
 		companyId = PortalUtil.getCompanyId(req);
-		
-		// build ui
-		layout.setMargin(false);
-		setContent(layout);
+
 		ipc = new LiferayIPC();
 		ipc.extend(this);
 
+		// build ui
 		List<String> allEvents;
 		try {
 			allEvents = BeaconExpandoDataUtil.getAllEvents();
@@ -83,14 +80,11 @@ public class BeaconRegionGraph extends UI implements Serializable {
 			return;
 		}
 
-		ls.setImmediate(true);
 		layout.addComponent(ls);
 		layout.addComponent(chartLayout);
 
 		if (Validator.isNotNull(allEvents) && allEvents.size() > 0) {
-			for (String event : allEvents) {
-				ls.addItem(event);
-			}
+			ls.addItems(allEvents.toArray());
 		}
 		
 		// add listener to show new graph
@@ -121,8 +115,8 @@ public class BeaconRegionGraph extends UI implements Serializable {
 							BeaconExpandoDataUtil.getLastDateForEvent(event, companyId);
 
 						// set big data into session for use by other portlets
-						PortletSession ps =
-							((WrappedPortletSession) (VaadinService.getCurrentRequest().getWrappedSession())).getPortletSession();
+						PortletSession ps = VaadinPortletService.getCurrentPortletRequest()
+								.getPortletSession();
 
 						ps.setAttribute(
 							BeaconExpandoDataUtil.IPC_REGION_CHART_DATA, regionChartData,
@@ -200,32 +194,18 @@ public class BeaconRegionGraph extends UI implements Serializable {
 
 
 		// couple of utility buttons to make and clear fake data
-		Button b = new Button("Make Fake Data");
-		b.addClickListener(new ClickListener() {
+		Button b = new Button("Make Fake Data", new ClickListener() {
 			
 			@Override
 			public void buttonClick(ClickEvent event) {
-				try {
-					BeaconExpandoDataUtil.makeFakeData(companyId);
-					List<String> newEvents = BeaconExpandoDataUtil.getAllEvents();
-					ls.removeAllItems();
-					for (String newEvent : newEvents) {
-						ls.addItem(newEvent);
-					}
-					Notification.show("Created fake data");
-				}
-				catch (Exception e) {
-					Notification.show(
-						"Error", e.getLocalizedMessage(), Notification.Type.WARNING_MESSAGE);
-					e.printStackTrace();
-				}
+				generateTestData();
 			}
+
 		});
 		
 		layout.addComponent(b);
 
-		b = new Button("Clear All Data");
-		b.addClickListener(new ClickListener() {
+		b = new Button("Clear All Data", new ClickListener() {
 			
 			@Override
 			public void buttonClick(ClickEvent event) {
@@ -243,6 +223,58 @@ public class BeaconRegionGraph extends UI implements Serializable {
 		});
 		
 		layout.addComponent(b);
+
+		layout.setSpacing(true);
+		layout.setMargin(false);
+		setContent(layout);
+
+
+	}
+	
+	private void generateTestData() {
+		// visit the server periodically to see when thread is done
+		setPollInterval(1000);
+
+		final ProgressBar progressBar = new ProgressBar();
+		progressBar
+				.setCaption("Creating some test data, this might take a while...");
+		progressBar.setIndeterminate(true);
+		layout.addComponent(progressBar);
+		final UI ui = UI.getCurrent();
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					BeaconExpandoDataUtil.makeFakeData(companyId);
+					final List<String> newEvents = BeaconExpandoDataUtil
+							.getAllEvents();
+
+					ui.access(new Runnable() {
+
+						@Override
+						public void run() {
+							ls.removeAllItems();
+							ls.addItems(newEvents.toArray());
+							Notification.show("Created fake data");
+							layout.removeComponent(progressBar);
+							setPollInterval(-1);
+						}
+					});
+				} catch (final Exception e) {
+					ui.access(new Runnable() {
+
+						@Override
+						public void run() {
+							Notification.show("Error", e.getLocalizedMessage(),
+									Notification.Type.WARNING_MESSAGE);
+							layout.removeComponent(progressBar);
+							setPollInterval(-1);
+						}
+					});
+					e.printStackTrace();
+				}
+			}
+		}.start();
 
 	}
 }
