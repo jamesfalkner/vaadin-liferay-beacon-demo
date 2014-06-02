@@ -19,9 +19,8 @@ import com.vaadin.annotations.Widgetset;
 import com.vaadin.data.Container;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.server.VaadinPortletService;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.WrappedPortletSession;
-import com.vaadin.server.WrappedSession;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.Notification;
@@ -63,7 +62,6 @@ public class BeaconProximityGraph extends UI implements Serializable {
 		setContent(layout);
 
 		final NativeSelect ls = new NativeSelect("Beacon");
-		ls.setImmediate(true);
 		ls.setEnabled(false);
 		layout.addComponent(ls);
 		layout.addComponent(chartLayout);
@@ -82,10 +80,9 @@ public class BeaconProximityGraph extends UI implements Serializable {
 					if (Validator.isNull(evt))
 						return;
 					
-					WrappedSession session = getSession().getSession();
-					PortletSession psession =
-						((WrappedPortletSession) session).getPortletSession();
-
+					PortletSession psession = VaadinPortletService.getCurrentPortletRequest()
+							.getPortletSession();
+					
 					selectedEventData =
 						(Map<String, Map<String, Container>>) psession.getAttribute(
 							BeaconExpandoDataUtil.IPC_BEACON_CHART_DATA,

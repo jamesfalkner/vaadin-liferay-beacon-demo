@@ -60,7 +60,6 @@ public class BeaconPingTable extends UI {
 
 		final Table t = new Table();
 		t.setItemCaptionMode(ItemCaptionMode.ID);
-		t.setImmediate(true);
 		t.setSizeFull();
 		t.setSelectable(true);
 
